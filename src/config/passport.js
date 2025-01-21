@@ -28,6 +28,8 @@ passport.use(
         }
 
         done(null, user); // Pass the user object to Passport
+        // console.log(profile);
+        
       } catch (err) {
         done(err, null);
       }

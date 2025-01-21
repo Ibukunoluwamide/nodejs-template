@@ -2,13 +2,15 @@ const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { registerUser, verifyEmail, setTransactionPin, loginUser } = require('../controllers/userController');
+const { sendForgotPasswordOtp, resetPassword } = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/verify-email', verifyEmail);
 router.post('/set-transaction-pin', setTransactionPin);
 router.post('/login', loginUser);
-
+router.post('/forgot-password', sendForgotPasswordOtp);
+router.post('/reset-password', resetPassword);
 
 
 // Google Login Route
