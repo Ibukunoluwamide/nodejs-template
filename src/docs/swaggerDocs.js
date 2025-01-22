@@ -13,6 +13,10 @@ const swaggerDocumentation = {
         url: 'http://localhost:5000',
         // description: 'Development Server',
       },
+      {
+        url: 'http://localhost:3000',
+        // description: 'Development Server',
+      },
     ],
     components: {
       securitySchemes: {
@@ -85,17 +89,17 @@ const swaggerDocumentation = {
                     last_name: { type: 'string' },
                     email: { type: 'string', format: 'email' },
                     phone_number: { type: 'string', example: '+1234567890' },
+                    nationality: { type: 'string' },
                     password: { type: 'string', format: 'password' },
-                    gender: { type: 'string', enum: ['male', 'female', 'other'] },
                   },
                   required: ['first_name', 'last_name', 'email', 'phone_number', 'password'],
                   example: {
                     first_name: 'John',
                     last_name: 'Doe',
                     email: 'johndoe@example.com',
-                    phone_number: '+1234567890',
+                    phone_number: '+2348015678920',
+                    nationality: 'Nigeria',
                     password: 'Password123!',
-                    gender: 'male',
                   },
                 },
               },
@@ -161,6 +165,72 @@ const swaggerDocumentation = {
           },
         },
       },       
+      '/auth/verify-otp': {
+        post: {
+          summary: 'Email and OTP verification',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    email: { type: 'string' },
+                    code: { type: 'string' },
+                    type: { type: 'string', example:"otp or email" },
+                  },
+                  example: {
+                    email: 'user@example.com',
+                    code: '123456',
+                    type: 'email',
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Email verified successfully',
+            },
+            401: {
+              description: 'Invalid credentials',
+            },
+          },
+        },
+      },       
+      '/auth/set-transaction-pin': {
+        post: {
+          summary: 'Set Transaction PIN',
+          tags: ['Auth'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    email: { type: 'string' },
+                    pin: { type: 'string' },
+                  },
+                  example: {
+                    email: 'user@example.com',
+                    pin: '1234',
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Transaction PIN set successfully',
+            },
+            401: {
+              description: 'User not found',
+            },
+          },
+        },
+      },     
         '/auth/google': {
           get: {
             summary: 'Sign in with Google',

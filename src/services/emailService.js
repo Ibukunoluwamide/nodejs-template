@@ -1,9 +1,8 @@
-
 const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
 
-const sendVerificationEmail = async (email, code) => {
-      // Save the OTP to the database with an expiry time of 10 minutes
+const sendOtp = async (email, code, type) => {
+  // Save the OTP to the database with an expiry time of 10 minutes
   const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
   const otp = new Otp({
     email,
@@ -12,22 +11,37 @@ const sendVerificationEmail = async (email, code) => {
   });
 
   await otp.save();
+
+  // Define dynamic subject and body based on the type
+  let subject;
+  let body;
+
+  if (type === 'emailVerification') {
+    subject = 'Verify Your Email Address';
+    body = `Thank you for registering! Please use the following code to verify your email address: ${code}`;
+  } else if (type === 'otpVerification') {
+    subject = 'OTP Verification';
+    body = `Use the following OTP code to complete your verification process: ${code}`;
+  } else {
+    throw new Error('Invalid email type specified');
+  }
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER, // Set in .env
-      pass: process.env.EMAIL_PASS, // Set in .env
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASS, 
     },
   });
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: 'Verify Your Email',
-    text: `Your verification code is: ${code}`,
+    subject: subject,
+    text: body,
   };
 
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = { sendVerificationEmail };
+module.exports = { sendOtp };

@@ -4,14 +4,14 @@ const Otp = require('../models/Otp');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { registerValidation, loginValidation } = require('../utils/validation');
-const { sendVerificationEmail } = require('../services/emailService');
+const { sendOtp } = require('../services/emailService');
 
 // Registration
 const registerUser = async (req, res) => {
   const { error } = registerValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const { first_name, last_name, email, phone_number, password } = req.body;
+  const { first_name, last_name, email, phone_number, password, nationality } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -23,6 +23,7 @@ const registerUser = async (req, res) => {
       last_name,
       email,
       phone_number,
+      nationality,
       password: hashedPassword,
     });
 
@@ -30,7 +31,7 @@ const registerUser = async (req, res) => {
 
     // Generate verification code
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    await sendVerificationEmail(email, verificationCode);
+    await sendOtp(email, verificationCode, 'emailVerification');
 
     res.status(201).send({ email, message: 'Registration successful. Check your email for verification.' });
   } catch (err) {
@@ -39,8 +40,8 @@ const registerUser = async (req, res) => {
 };
 
 // Verify email
-const verifyEmail = async (req, res) => {
-    const { email, code } = req.body;
+const verifyOtp = async (req, res) => {
+    const { email, code, type } = req.body;
   
     try {
       // Check if the OTP exists and is valid
@@ -54,7 +55,7 @@ const verifyEmail = async (req, res) => {
       // Delete the OTP after successful verification
       await Otp.deleteOne({ email, code });
   
-      res.status(200).send({ message: 'Email verified successfully' });
+      res.status(200).send({ message: `${type} verified successfully` });
     } catch (err) {
       res.status(500).send({ error: 'Server error' });
     }
@@ -84,26 +85,35 @@ const setTransactionPin = async (req, res) => {
 
 // Login
 const loginUser = async (req, res) => {
-    const { error } = loginValidation(req.body);
-    if (error) return res.status(400).send({ error: error.details[0].message });
-  
-    const { email, password } = req.body;
-  
-    try {
-      const user = await User.findOne({ email });
+  const { error } = loginValidation(req.body);
+  if (error) return res.status(400).send({ error: error.details[0].message });
+
+  const { email, password } = req.body;
+
+  try {
+      // Find user including password for validation
+      const user = await User.findOne({ email }).select('+password'); // Explicitly include password
       if (!user) return res.status(400).send({ message: 'Invalid email or password' });
-  
+
       if (!user.status) return res.status(400).send({ error: 'Email not verified' });
-  
+
+      // Validate password
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) return res.status(400).send({ message: 'Invalid email or password' });
-  
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.status(200).send({ token });
-    } catch (err) {
+
+      // Generate token
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+      // Exclude sensitive fields from the user object before sending the response
+      const { password: _, transaction_pin, ...safeUser } = user.toObject();
+
+      res.status(200).send({ message: 'Login successful', token, user: safeUser });
+  } catch (err) {
+      console.error(err); // Log the error for debugging
       res.status(500).send({ error: 'Server error' });
-    }
-  };
+  }
+};
+
   
   
 // Fetch user details
@@ -118,5 +128,5 @@ const fetchUserDetails = async (req, res) => {
     }
   };
   
-  module.exports = { registerUser, verifyEmail, setTransactionPin, loginUser, fetchUserDetails };
+  module.exports = { registerUser, verifyOtp, setTransactionPin, loginUser, fetchUserDetails };
     

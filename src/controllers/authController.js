@@ -1,6 +1,6 @@
 const Otp = require('../models/Otp');
 const User = require('../models/User');
-const { sendVerificationEmail } = require('../services/emailService');
+const { sendOtp } = require('../services/emailService');
 const bcrypt = require('bcryptjs');
 
 const sendForgotPasswordOtp = async (req, res) => {
@@ -20,7 +20,7 @@ const sendForgotPasswordOtp = async (req, res) => {
     await otp.save();
 
     // Send OTP to user's email
-    await sendVerificationEmail(email, otpCode);
+    await sendOtp(email, otpCode, 'otpVerification');
 
     res.status(200).send({ message: 'OTP sent to your email' });
   } catch (err) {
