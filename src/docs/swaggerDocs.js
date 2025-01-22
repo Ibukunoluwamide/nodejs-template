@@ -10,13 +10,13 @@ const swaggerDocumentation = {
     },
     servers: [
       {
-        url: 'http://localhost:5000',
+        url: 'https://remitex-server.onrender.com',
         // description: 'Development Server',
       },
       {
-        url: 'http://localhost:3000',
+        url: 'http://localhost:5000',
         // description: 'Development Server',
-      },
+      }
     ],
     components: {
       securitySchemes: {
