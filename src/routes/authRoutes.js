@@ -1,8 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const { registerUser, verifyOtp, setTransactionPin, loginUser } = require('../controllers/userController');
-const { sendForgotPasswordOtp, resetPassword } = require('../controllers/authController');
+const {registerUser, verifyOtp, setTransactionPin, loginUser, sendForgotPasswordOtp, resetPassword } = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/register', registerUser);

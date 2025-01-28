@@ -4,12 +4,15 @@
 const swaggerDocumentation = {
     openapi: '3.0.0',
     info: {
-      title: 'Example API',
+      title: 'Remitex API',
       version: '1.0.0',
-      description: 'API documentation for the  example project',
+      description: 'API documentation for the Remitex financial project',
     },
     servers: [
-   
+      {
+        url: 'https://remitex-server.onrender.com',
+        // description: 'Development Server',
+      },
       {
         url: 'http://localhost:5000',
         // description: 'Development Server',
