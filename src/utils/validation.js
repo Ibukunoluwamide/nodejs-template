@@ -5,7 +5,7 @@ const registerValidation = (data) => {
     first_name: Joi.string().min(3).required(),
     last_name: Joi.string().min(3).required(),
     email: Joi.string().email().required(),
-    phone_number: Joi.string().pattern(/^\+\d{1,15}$/).required(),
+    phone_number: Joi.string().pattern(/^\+\d{1,15}$/).optional(),
     nationality: Joi.string().optional(),
     password: Joi.string().min(8).required(),
   });

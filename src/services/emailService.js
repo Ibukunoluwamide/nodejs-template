@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
+require("dotenv").config();
 
 const sendOtp = async (email, code, type) => {
   // Save the OTP to the database with an expiry time of 10 minutes
@@ -19,7 +20,7 @@ const sendOtp = async (email, code, type) => {
   if (type === 'emailVerification') {
     subject = 'Verify Your Email Address';
     body = `Thank you for registering! Please use the following code to verify your email address: ${code}`;
-  } else if (type === 'otpVerification') {
+  } else if (type === 'otpVerification' || type === 'passwordReset') {
     subject = 'OTP Verification';
     body = `Use the following OTP code to complete your verification process: ${code}`;
   } else {
