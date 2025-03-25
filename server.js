@@ -1,6 +1,5 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const setupSwaggerDocs = require('./src/config/swagger');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const connectDB = require('./src/config/db');
@@ -8,6 +7,8 @@ const connectDB = require('./src/config/db');
 dotenv.config();
 
 const app = express();
+app.use(cors())
+
 
 // Connect to MongoDB
 connectDB();
@@ -19,8 +20,6 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 
-// Setup Swagger
-setupSwaggerDocs(app);
 
 // Default Route
 app.get('/', (req, res) => {

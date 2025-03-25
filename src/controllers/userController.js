@@ -1,6 +1,12 @@
 const User = require("../models/User");
+const uploadImage = require("../utils/uploadImage");
+const { profileUpdateValidation } = require("../utils/validation");
 
-  
+  // Function to check if a string is a valid base64 image
+function isBase64Image(base64String) {
+  const base64Pattern = /^data:image\/(png|jpg|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+$/;
+  return base64Pattern.test(base64String);
+}
   
 // Fetch user Profile
 const fetchUserProfile = async (req, res) => {
@@ -22,10 +28,6 @@ const fetchUserProfile = async (req, res) => {
       if (error) return res.status(400).json({ error: error.details[0].message });
   
       const { first_name, last_name, phone_number, profile_image, address, gender, nationality } = req.body;
-  
-      // Check if the phone number already exists (but not for the current user)
-      const existingUserPhone = await User.findOne({ phone_number, _id: { $ne: userId } });
-      if (existingUserPhone) return res.status(400).json({ error: 'Phone number already in use' });
   
    // Handle profile picture upload if included
   

@@ -1,13 +1,13 @@
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocumentation = require('../docs/swaggerDocs');
+const swaggerAutogen = require("swagger-autogen")();
+
 
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Remitex API',
+      title: 'My API',
       version: '1.0.0',
-      description: 'API documentation for the Remitex financial project',
+      description: 'API documentation',
     },
     servers: [
       {
@@ -33,10 +33,10 @@ const options = {
 };
 
 
-const setupSwaggerDocs = (app) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation));
-  console.log('Swagger docs available at http://localhost:5000/api-docs');
-};
+const outputFile = "./swagger-output.json"; // Generated file
+const routes = ["../routes/*.js"]; // Your main entry point
 
-module.exports = setupSwaggerDocs;
+swaggerAutogen(outputFile, routes, options).then(() => {
+    require("../../server"); // Start your server after generating docs
+});
 

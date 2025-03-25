@@ -19,14 +19,14 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ first_name, last_name, email, phone_number, nationality, password: hashedPassword });
 
-    const emailVerificationCode = Math.floor(100000 + Math.random() * 900000);
-    await Otp.findOneAndUpdate(
-      { email },
-      { code: emailVerificationCode, expiresAt: new Date(Date.now() + 10 * 60 * 1000) },
-      { new: true, upsert: true }
-    );
+    // const emailVerificationCode = Math.floor(100000 + Math.random() * 900000);
+    // await Otp.findOneAndUpdate(
+    //   { email },
+    //   { code: emailVerificationCode, expiresAt: new Date(Date.now() + 10 * 60 * 1000) },
+    //   { new: true, upsert: true }
+    // );
 
-    await sendOtp(email, emailVerificationCode, 'emailVerification');
+    // await sendOtp(email, emailVerificationCode, 'emailVerification');
     await user.save();
 
     res.status(201).json({ email, message: 'Registration successful. Check your email for verification.' });
