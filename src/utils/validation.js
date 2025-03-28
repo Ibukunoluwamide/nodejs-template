@@ -17,6 +17,7 @@ const loginValidation = (data) => {
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   });
+  return schema.validate(data);
 }
   const profileUpdateValidation = (data) => {
     const schema = Joi.object({

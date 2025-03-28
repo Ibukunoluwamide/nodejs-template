@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
     // await sendOtp(email, emailVerificationCode, 'emailVerification');
     await user.save();
 
-    res.status(201).json({ email, message: 'Registration successful. Check your email for verification.' });
+    res.status(201).json({ email, message: 'Registration successful.' });
   } catch (err) {
     res.status(500).json({ error: 'Server error', err });
   }
